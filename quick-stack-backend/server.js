@@ -26,8 +26,8 @@ app.use(cors({
 app.use(cookieSession({
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     keys: [process.env.SESSION_SECRET],
-    sameSite: 'None',
-    secure: false,  
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+    secure: process.env.NODE_ENV === 'production',  
 }));
 
 
