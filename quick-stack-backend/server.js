@@ -34,14 +34,22 @@ app.use(cookieSession({
 
 // redirect user to GitHub for authentication
 app.get('/auth/github', (req, res) => {
+    console.log('run get request');
+
     const redirectUri = `http://localhost:${BACKEND_PORT}/auth/callback`; // use backend port for callback
     res.redirect(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${redirectUri}`);
 });
 
 // handle the callback from GitHub
 app.get('/auth/callback', async (req, res) => {
-    console.log(req.session.accessToken);
+    console.log('Callback hit');
     const code = req.query.code;
+    
+    if (!code) {
+        console.error('No code returned from GitHub'); // Log if no code is returned
+        return res.status(400).json({ error: 'No code returned from GitHub' });
+    }
+
     try {
         const tokenResponse = await axios.post('https://github.com/login/oauth/access_token', {
             client_id: process.env.CLIENT_ID,
@@ -52,6 +60,9 @@ app.get('/auth/callback', async (req, res) => {
         });
 
         const accessToken = tokenResponse.data.access_token;
+        console.log('Access Token set in session:', req.session.accessToken);
+        console.log('access token created:', accessToken);
+
         if (!accessToken) {
             return res.status(400).json({ error: 'Failed to retrieve access token from GitHub' });
         }
@@ -68,6 +79,7 @@ app.get('/auth/callback', async (req, res) => {
 
 // endpoint to create a GitHub repo
 app.post('/create-repo', async (req, res) => {
+    console.log('Received a request to create a repo', req.body);
     const { repoName } = req.body;
     const accessToken = req.session.accessToken;
 
