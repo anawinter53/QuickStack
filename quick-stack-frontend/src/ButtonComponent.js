@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './ButtonComponent.css';
 
 // set ports in .env or use typical port numbers if it is not set
 // const FRONTEND_PORT = process.env.REACT_APP_FRONTEND_PORT || 3000;
@@ -35,22 +36,38 @@ const ButtonComponent = () => {
     };
 
     return (
-        <div className="container mt-4">
-            <button className="btn btn-primary me-2" onClick={handleLogin}>
-                Login with GitHub
-            </button>
-            <input
-                type="text"
-                placeholder="Enter repo name"
-                value={repoName}
-                onChange={(e) => setRepoName(e.target.value)}
-                className="me-2"
-            />
-            <button className="btn btn-secondary" onClick={handleClickCreateRepo}>
-                Create GitHub Repo
-            </button>
+        <div className="text-center">
+            <div className="login-section">
+                <div className="message">
+                    <text className="font-weight-light">Before we get started, let's get you logged in</text>
+                </div>
+                <br></br>
+                <div className="btn-container">
+                    <button className="btn btn-primary mb-2" onClick={handleLogin}>
+                        <text className="display-h4 font-weight-light">Login with GitHub</text>
+                    </button>
+                </div>
+            </div>
+            <br></br>
+            <div className="github-repo-section">
+                <div className="input-form">
+                    <input
+                        type="text"
+                        placeholder="Enter repo name"
+                        value={repoName}
+                        onChange={(e) => setRepoName(e.target.value)}
+                        className="form-control mb-2 object-fit-fill" 
+                    />
+                </div>
+                <br></br>
+                <div className="btn-container">
+                    <button className="btn btn-secondary" onClick={handleClickCreateRepo}>
+                        Create GitHub Repo
+                    </button>
+                </div>
+            </div>
         </div>
-    );
+    );      
 };
 
 export default ButtonComponent;
