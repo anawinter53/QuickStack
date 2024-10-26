@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import ButtonComponent from './ButtonComponent';
 
 const App = () => {
-    const [data, setData] = useState('');
+  // const [data, setData] = useState('');
 
-    useEffect(() => {
-        fetch('http://localhost:5000')  // Adjust the URL as needed
-            .then(response => response.text())
-            .then(data => setData(data))
-            .catch(err => console.error(err));
-    }, []);
+  useEffect(() => {
+    fetch('http://localhost:3000') 
+        .then(response => response.text())
+        // .then(data => setData(data))
+        .catch(err => console.error(err));
+  }, []);
 
-    return (
-        <div>
-            <ButtonComponent />
-        </div>
-    );
+  return (
+    <div>
+        <ButtonComponent />
+        {/* <p>{data}</p> */}
+    </div>
+  );
 };
 
 export default App;
