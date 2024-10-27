@@ -9,6 +9,7 @@ const app = express();
 // set ports in .env or use typical port numbers if it is not set
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
 const BACKEND_PORT = process.env.BACKEND_PORT || 3001;  
+const TOKEN = process.env.TOKEN;  
 
 
 app.use(express.json());
@@ -39,8 +40,6 @@ app.get('/auth/github', (req, res) => {
     const redirectUri = `http://localhost:${BACKEND_PORT}/auth/callback`; // use backend port for callback
     res.redirect(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${redirectUri}`);
 });
-
-const TOKEN = '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'
 
 // handle the callback from GitHub
 app.get('/auth/callback', async (req, res) => {
