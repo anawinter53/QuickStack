@@ -31,8 +31,6 @@ app.use(cookieSession({
     secure: process.env.NODE_ENV === 'production',  
 }));
 
-
-
 // redirect user to GitHub for authentication
 app.get('/auth/github', (req, res) => {
     console.log('run get request');
