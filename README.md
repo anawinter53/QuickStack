@@ -1,6 +1,6 @@
-# Jump Start Hackathon
+![image](https://github.com/user-attachments/assets/4f87ea77-a0b3-4706-b304-f2249655f4b4)
 
-This project was a hackathon submission for Huddle Hive's Jump Start Hackathon. 
+*This project was a hackathon submission for Huddle Hive's Jump Start Hackathon.*
 
 ## Who are we?
 
