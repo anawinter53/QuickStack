@@ -100,7 +100,6 @@ app.get('/auth/callback', async (req, res) => {
 app.post('/create-repo', async (req, res) => {
     console.log('Received a request to create a repo', req.body);
     const { repoName } = req.body;
-    const appDir = 'frontend'; 
     const accessToken = req.session.accessToken;
 
     console.log(accessToken)
@@ -122,15 +121,15 @@ app.post('/create-repo', async (req, res) => {
                 'Content-Type': 'application/json',
             },
         });
-        res.json({ message: 'Repository created', url: response.data.html_url });
+        //res.json({ message: 'Repository created', url: response.data.html_url });
 
         const repoUrl = response.data.clone_url;
         const repoPath = path.join(__dirname, repoName);
 
-        await execPromise(`git clone ${repoUrl}`);
+        await execPromise(`git clone ${repoUrl} ${repoPath}`);
 
         // initialize React app inside the repo directory
-        await execPromise(`npx create-react-app ${appDir}`, { cwd: repoPath });
+        await execPromise(`npx create-react-app frontend`, { cwd: repoPath });
 
         // set up the backend folder and server.js
         const backendPath = path.join(repoPath, 'backend');
@@ -150,15 +149,92 @@ app.post('/create-repo', async (req, res) => {
                 console.log(\`Backend server is running on port \${PORT}\`);
             });
         `;
+
+        // Write the server.js file using fs
+        // fs.writeFileSync(path.join(backendPath, 'server.js'), serverJsContent.trim());
+        // console.log('server.js created successfully.');
+
+        // Check if the backend folder and server.js file exist
+        // console.log('Current directory structure:', fs.readdirSync(repoPath));
+
         await execPromise(`echo "${serverJsContent}" > ${path.join(backendPath, 'server.js')}`);
 
+        // create a README.md file with instructions
+        // const readmeContent = `
+        //     # ${repoName}
 
-        // commit and push the React app
-        await execPromise(`git add .`, { cwd: repoPath });
-        await execPromise(`git commit -m "Add React frontend and backend server"`, { cwd: repoPath });
-        await execPromise(`git push`, { cwd: repoPath });
+        //     This repository contains a basic setup for a React frontend and an Express backend.
 
-        res.json({ message: 'React app created and pushed to GitHub repository!', url: repoUrl });
+        //     ## Getting Started
+
+        //     ### Prerequisites
+        //     - Node.js and npm installed
+        //     - Git installed
+
+        //     ### Installation
+
+        //     1. **Clone the repository:**
+        //        \`\`\`bash
+        //        git clone ${repoUrl}
+        //        cd ${repoName}
+        //        \`\`\`
+
+        //     2. **Install frontend dependencies:**
+        //        \`\`\`bash
+        //        cd frontend
+        //        npm install
+        //        \`\`\`
+
+        //     3. **Install backend dependencies:**
+        //        \`\`\`bash
+        //        cd ../backend
+        //        npm install express
+        //        \`\`\`
+
+        //     ## Running the Application
+
+        //     ### Frontend
+        //     - In the \`frontend\` directory, run:
+        //       \`\`\`bash
+        //       npm start
+        //       \`\`\`
+        //     - This will start the React app on http://localhost:3000.
+
+        //     ### Backend
+        //     - In the \`backend\` directory, run:
+        //       \`\`\`bash
+        //       node server.js
+        //       \`\`\`
+        //     - The backend server will run on http://localhost:5000.
+
+        //     ## License
+        //     This project is licensed under the MIT License.
+        // `;
+
+        // await execPromise(`echo "${readmeContent}" > ${path.join(repoPath, 'README.md')}`);
+
+
+        // commit and push frontend and backend
+        try {
+            await execPromise(`git add .`, { cwd: repoPath });
+            console.log('Added files to Git.');
+
+            // Check the status after adding
+            // const statusAfterAdd = await execPromise(`git status`, { cwd: repoPath });
+            // console.log('Git status after adding files:\n', statusAfterAdd);
+
+            await execPromise(`git commit -m "Add React frontend, backend server"`, { cwd: repoPath });
+            console.log('Committed files.');
+
+            // Push to the main branch (or replace with your branch name)
+            await execPromise(`git push origin main`, { cwd: repoPath });
+            console.log('Pushed to GitHub repository.');
+        } catch (err) {
+            console.error('Error during Git operations:', err);
+            return res.status(500).json({ error: 'Git operations failed', details: err.message });
+        }
+
+        res.json({ message: 'React frontend, backend server, and README created and pushed to GitHub repository!', url: repoUrl });
 
         // // set up local directory and initialize Git repo
         // fs.mkdirSync(projectDir);
