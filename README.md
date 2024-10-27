@@ -44,9 +44,9 @@ If you want to try this out for yourself, here's what you will need to do:
 
 The project was built with the following list of technologies:
 
-Frontend: React, Bootstrap, Axios, CORS
-Middleware: Axios, CORS
-Backend: NodeJS, Express, cookie-session
+**Frontend:** React, Bootstrap, Axios, CORS<br>
+**Middleware:** Axios, CORS<br>
+**Backend:** NodeJS, Express, cookie-session<br>
 
 ## Accomplishments
 
