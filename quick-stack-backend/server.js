@@ -5,18 +5,14 @@ const cookieSession = require('cookie-session');
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
-//const simpleGit = require('simple-git');
-//const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
-//const { Octokit } = require('@octokit/rest');
 
 
 // set ports in .env or use typical port numbers if it is not set
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
 const BACKEND_PORT = process.env.BACKEND_PORT || 3001;  
 const TOKEN = process.env.TOKEN;  
-//const octokit = new Octokit({ auth: TOKEN });
 
 
 app.use(express.json());
@@ -150,13 +146,6 @@ app.post('/create-repo', async (req, res) => {
             });
         `;
 
-        // Write the server.js file using fs
-        // fs.writeFileSync(path.join(backendPath, 'server.js'), serverJsContent.trim());
-        // console.log('server.js created successfully.');
-
-        // Check if the backend folder and server.js file exist
-        // console.log('Current directory structure:', fs.readdirSync(repoPath));
-
         await execPromise(`echo "${serverJsContent}" > ${path.join(backendPath, 'server.js')}`);
 
         // create a README.md file with instructions
@@ -214,19 +203,14 @@ app.post('/create-repo', async (req, res) => {
         // await execPromise(`echo "${readmeContent}" > ${path.join(repoPath, 'README.md')}`);
 
 
-        // commit and push frontend and backend
+        // commit and push 
         try {
             await execPromise(`git add .`, { cwd: repoPath });
             console.log('Added files to Git.');
 
-            // Check the status after adding
-            // const statusAfterAdd = await execPromise(`git status`, { cwd: repoPath });
-            // console.log('Git status after adding files:\n', statusAfterAdd);
-
             await execPromise(`git commit -m "Add React frontend, backend server"`, { cwd: repoPath });
             console.log('Committed files.');
 
-            // Push to the main branch (or replace with your branch name)
             await execPromise(`git push origin main`, { cwd: repoPath });
             console.log('Pushed to GitHub repository.');
         } catch (err) {
@@ -235,19 +219,6 @@ app.post('/create-repo', async (req, res) => {
         }
 
         res.json({ message: 'React frontend, backend server, and README created and pushed to GitHub repository!', url: repoUrl });
-
-        // // set up local directory and initialize Git repo
-        // fs.mkdirSync(projectDir);
-        // fs.writeFileSync(path.join(projectDir, 'README.md'), `# ${repoName}\n\nInitial commit for ${repoName}.`);
-
-        // // initialize, commit, and push
-        // await git.cwd(projectDir).init();
-        // await git.add('./*');
-        // await git.commit('Initial commit');
-        // await git.addRemote('origin', repoUrl);
-        // await git.push('origin', 'master');
-
-        // res.json({ message: 'Repository created and initial code pushed', url: response.data.html_url });
 
     } catch (error) {
         if (error.response) {
@@ -265,9 +236,6 @@ app.post('/create-repo', async (req, res) => {
         }
     }
 });
-
-
-
 
 
 // start the server on the backend port

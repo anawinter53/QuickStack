@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './ButtonComponent.css';
 
 // set ports in .env or use typical port numbers if it is not set
-// const FRONTEND_PORT = process.env.REACT_APP_FRONTEND_PORT || 3000;
 const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || 3001;  
 
 const ButtonComponent = () => {
