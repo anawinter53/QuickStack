@@ -5,11 +5,18 @@ const cookieSession = require('cookie-session');
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
+//const simpleGit = require('simple-git');
+//const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+//const { Octokit } = require('@octokit/rest');
+
 
 // set ports in .env or use typical port numbers if it is not set
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
 const BACKEND_PORT = process.env.BACKEND_PORT || 3001;  
 const TOKEN = process.env.TOKEN;  
+//const octokit = new Octokit({ auth: TOKEN });
 
 
 app.use(express.json());
@@ -30,6 +37,19 @@ app.use(cookieSession({
     sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     secure: process.env.NODE_ENV === 'production',  
 }));
+
+// utility function to use exec with Promises
+function execPromise(command, options = {}) {
+    return new Promise((resolve, reject) => {
+        exec(command, options, (error, stdout, stderr) => {
+        if (error) {
+            reject(`exec error: ${error}`);
+        } else {
+            resolve(stdout ? stdout : stderr);
+        }
+        });
+    });
+}
 
 // redirect user to GitHub for authentication
 app.get('/auth/github', (req, res) => {
@@ -80,6 +100,7 @@ app.get('/auth/callback', async (req, res) => {
 app.post('/create-repo', async (req, res) => {
     console.log('Received a request to create a repo', req.body);
     const { repoName } = req.body;
+    const appDir = 'frontend'; 
     const accessToken = req.session.accessToken;
 
     console.log(accessToken)
@@ -94,8 +115,6 @@ app.post('/create-repo', async (req, res) => {
     };
 
     try {
-        
-
         const response = await axios.post('https://api.github.com/user/repos', repoData, {
             headers: {
                 Authorization: `Bearer ${TOKEN}`,
@@ -104,6 +123,56 @@ app.post('/create-repo', async (req, res) => {
             },
         });
         res.json({ message: 'Repository created', url: response.data.html_url });
+
+        const repoUrl = response.data.clone_url;
+        const repoPath = path.join(__dirname, repoName);
+
+        await execPromise(`git clone ${repoUrl}`);
+
+        // initialize React app inside the repo directory
+        await execPromise(`npx create-react-app ${appDir}`, { cwd: repoPath });
+
+        // set up the backend folder and server.js
+        const backendPath = path.join(repoPath, 'backend');
+        await execPromise(`mkdir ${backendPath}`);
+
+        // write a basic server.js file
+        const serverJsContent = `
+            const express = require('express');
+            const app = express();
+            const PORT = process.env.PORT || 5000;
+
+            app.get('/', (req, res) => {
+                res.send('Hello from the backend!');
+            });
+
+            app.listen(PORT, () => {
+                console.log(\`Backend server is running on port \${PORT}\`);
+            });
+        `;
+        await execPromise(`echo "${serverJsContent}" > ${path.join(backendPath, 'server.js')}`);
+
+
+        // commit and push the React app
+        await execPromise(`git add .`, { cwd: repoPath });
+        await execPromise(`git commit -m "Add React frontend and backend server"`, { cwd: repoPath });
+        await execPromise(`git push`, { cwd: repoPath });
+
+        res.json({ message: 'React app created and pushed to GitHub repository!', url: repoUrl });
+
+        // // set up local directory and initialize Git repo
+        // fs.mkdirSync(projectDir);
+        // fs.writeFileSync(path.join(projectDir, 'README.md'), `# ${repoName}\n\nInitial commit for ${repoName}.`);
+
+        // // initialize, commit, and push
+        // await git.cwd(projectDir).init();
+        // await git.add('./*');
+        // await git.commit('Initial commit');
+        // await git.addRemote('origin', repoUrl);
+        // await git.push('origin', 'master');
+
+        // res.json({ message: 'Repository created and initial code pushed', url: response.data.html_url });
+
     } catch (error) {
         if (error.response) {
             // errors returned from GitHub's API
@@ -120,6 +189,10 @@ app.post('/create-repo', async (req, res) => {
         }
     }
 });
+
+
+
+
 
 // start the server on the backend port
 app.listen(BACKEND_PORT, () => {
