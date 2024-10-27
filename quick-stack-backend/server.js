@@ -43,7 +43,7 @@ app.get('/auth/github', (req, res) => {
 app.get('/auth/callback', async (req, res) => {
     console.log('Callback hit');
     const code = req.query.code;
-
+    
     if (!code) {
         console.error('No code returned from GitHub'); // Log if no code is returned
         return res.status(400).json({ error: 'No code returned from GitHub' });
@@ -98,17 +98,13 @@ app.post('/create-repo', async (req, res) => {
 
         const response = await axios.post('https://api.github.com/user/repos', repoData, {
             headers: {
-                Authorization: `Bearer ${TOKEN}`,
-                'Accept': 'application/vnd.github+json',
+                Authorization: `token ${accessToken}`,
+                'Accept': 'application/vnd.github.v3+json',
                 'Content-Type': 'application/json',
-                "X-GitHub-Api-Version": "2022-11-28"
             },
         });
-        console.log(response)
-
         res.json({ message: 'Repository created', url: response.data.html_url });
     } catch (error) {
-        console.log(error)
         if (error.response) {
             // errors returned from GitHub's API
             res.status(error.response.status).json({
