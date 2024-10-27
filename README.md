@@ -42,7 +42,7 @@ If you want to try this out for yourself, here's what you will need to do:
 
 ## Tech Stack
 
-The [project codebase](https://github.com/anawinter53/QuickStack) was composed with the following list of technologies:
+The project was built with the following list of technologies:
 
 Frontend: React, Bootstrap, Axios, CORS
 Middleware: Axios, CORS
