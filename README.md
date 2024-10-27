@@ -18,20 +18,38 @@ The team is then able to develop and mock their product easily and smoothly, wit
 
 ## Design
 
-Link to Figma: https://www.figma.com/design/0uiLqYDj6inBXE8qLD0smj/Hackathon-Idea?node-id=0-1&t=K69lebXY6bhQtccd-1
+Our design followed the HackathonParty style, since it would be integrated in the site itself.
+
+![image](https://github.com/user-attachments/assets/bdf530fe-45aa-498a-a99c-f4a01383bf27)
+
+## Running QuickStack
+
+If you want to try this out for yourself, here's what you will need to do:
+
+1. Clone this repo to your local machine
+2. Get your Github token
+     - Go to Settings > Developer Settings > Personal access tokens > Tokens (classic)
+     - Click 'generate new token (classic)' and fill in the required fields
+     - We suggest you set this token to expire in 7 days (if you need it for longer then adjust for the minimum time needed)
+     - We are still determining exactly what scope is required but the app should only need permissions to repo and write permissions
+3. Now that you have your token, go to the backend folder in the repo you've cloned and create a .env file
+4. Add your token to the .env file (don't include spaces, it should look like this -> TOKEN=yourtockenhere)
+5. To try this yourself you will have to create an OAuth app for the client_id and client_session
+6. Generate a session_secret (this can be anything) and add these three variables to the .env file
+7. Run the backend with `cd quick-stack-backend/ && node server.js`
+8. Run the frontend with `cd quick-stack-frontend/ && npm start`
+9. Have fun!
 
 ## Tech Stack
 
 The [project codebase](https://github.com/anawinter53/QuickStack) was composed with the following list of technologies:
 
-Frontend: React, JS, Bootstrap, Axios
-
-Backend: JS, Express, CORS, Axios, cookie-session
+Frontend: React, Bootstrap, Axios, CORS
+Middleware: Axios, CORS
+Backend: NodeJS, Express, cookie-session
 
 ## Accomplishments
 
 We're a team of colleagues so after our long work week it's admirable that we were all able to come together to build on a project in less than 12 hours. This project required skill sets that many of us had not used in a long time, due to the nature of this full-stack development project and given that we are all from our company's data team!
 
-Ironically, getting the project started up in the first place took over an hour with only one of us being able to access VSCode and Github to push changes to the repo. Developing this prototype together with only one IDE & Git being used was a challenge but we made it.
-
-
+Ironically, getting the project started up in the first place took over an hour with only one of us being able to access VSCode and Github to push changes to the repo. Developing this prototype together with only one IDE & Git being used was a challenge but we made it. We also couldn't use the access tokens returned by Github in the POST request so we had to prototype the project with a token created from Github settings and set in the .env file.
