@@ -98,7 +98,7 @@ app.post('/create-repo', async (req, res) => {
 
         const response = await axios.post('https://api.github.com/user/repos', repoData, {
             headers: {
-                Authorization: `token ${accessToken}`,
+                Authorization: `Bearer ${TOKEN}`,
                 'Accept': 'application/vnd.github.v3+json',
                 'Content-Type': 'application/json',
             },
