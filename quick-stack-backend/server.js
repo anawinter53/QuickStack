@@ -40,11 +40,13 @@ app.get('/auth/github', (req, res) => {
     res.redirect(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${redirectUri}`);
 });
 
+const TOKEN = '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'
+
 // handle the callback from GitHub
 app.get('/auth/callback', async (req, res) => {
     console.log('Callback hit');
     const code = req.query.code;
-    
+
     if (!code) {
         console.error('No code returned from GitHub'); // Log if no code is returned
         return res.status(400).json({ error: 'No code returned from GitHub' });
@@ -99,13 +101,17 @@ app.post('/create-repo', async (req, res) => {
 
         const response = await axios.post('https://api.github.com/user/repos', repoData, {
             headers: {
-                Authorization: `token ${accessToken}`,
-                'Accept': 'application/vnd.github.v3+json',
+                Authorization: `Bearer ${TOKEN}`,
+                'Accept': 'application/vnd.github+json',
                 'Content-Type': 'application/json',
+                "X-GitHub-Api-Version": "2022-11-28"
             },
         });
+        console.log(response)
+
         res.json({ message: 'Repository created', url: response.data.html_url });
     } catch (error) {
+        console.log(error)
         if (error.response) {
             // errors returned from GitHub's API
             res.status(error.response.status).json({

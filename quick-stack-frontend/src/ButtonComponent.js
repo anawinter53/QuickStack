@@ -17,12 +17,14 @@ const ButtonComponent = () => {
 
     const handleClickCreateRepo = async () => {
         console.log("Backend Port:", BACKEND_PORT); 
+
         if (!repoName) {
             alert('Please enter a repository name.');
             return;
         }
 
         try {
+            console.log('trying to send request to backend')
             const response = await axios.post(
                 `http://localhost:${BACKEND_PORT}/create-repo`,
                 { repoName },
